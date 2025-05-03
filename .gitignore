@@ -15,7 +15,11 @@ env/
 # Environment variables
 .env
 
-# Logs
+# Logs directory (keep the folder, ignore any files)
+logs/**
+!logs/.gitkeep
+
+# Log files elsewhere
 *.log
 
 # macOS
@@ -46,6 +50,9 @@ data/fsd/
 data/assets/**
 !data/assets/.gitkeep
 
-# Stream folder (empty seeds folder; it's OK to commit .gitkeep)
+# Stream seeds (keep folder skeleton via .gitkeep)
 data/stream/**
 !data/stream/.gitkeep
+
+# Generated embeddings (keep folder skeleton via .gitkeep)
+data/embeddings/

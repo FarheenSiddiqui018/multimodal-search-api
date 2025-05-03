@@ -1,0 +1,15 @@
+# Core ML & transforms
+torch
+torchvision
+torchaudio
+git+https://github.com/facebookresearch/ImageBind.git#egg=imagebind
+pillow
+numpy
+scikit-learn
+
+# Messaging & config
+kafka-python
+python-dotenv
+
+# Metrics
+prometheus-client
