@@ -1,0 +1,13 @@
+# data build
+datasets
+numpy
+opencv-python        # for synthetic video
+yt-dlp               # only if you want real YouTube downloads (optional)
+
+# ingestion
+kafka-python
+watchdog
+python-dotenv
+
+# support libs
+requests             # for any HTTP downloads
