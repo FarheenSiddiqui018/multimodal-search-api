@@ -1,0 +1,51 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Virtual environments
+.venv/
+venv/
+ENV/
+env/
+
+# Environment variables
+.env
+
+# Logs
+*.log
+
+# macOS
+.DS_Store
+
+# IDEs and editors
+.vscode/
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Docker Compose override
+docker-compose.override.yml
+
+# Distribution / packaging
+build/
+dist/
+*.egg-info/
+
+# Kafka / ingestion data directories
+data/fsd/
+
+# Generated dataset assets (we keep the empty folders via .gitkeep)
+data/assets/**
+!data/assets/.gitkeep
+
+# Stream folder (empty seeds folder; it's OK to commit .gitkeep)
+data/stream/**
+!data/stream/.gitkeep
