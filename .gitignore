@@ -1,9 +1,7 @@
-# Byte-compiled / optimized / DLL files
+# Python byte-compiled files and C extensions
 __pycache__/
 *.py[cod]
 *$py.class
-
-# C extensions
 *.so
 
 # Virtual environments
@@ -15,44 +13,47 @@ env/
 # Environment variables
 .env
 
-# Logs directory (keep the folder, ignore any files)
+# Logs (ignore all logs but keep folder structure)
 logs/**
 !logs/.gitkeep
 
 # Log files elsewhere
 *.log
 
-# macOS
+# macOS system files
 .DS_Store
 
-# IDEs and editors
+# IDE-specific files
 .vscode/
 .idea/
 *.iml
 *.ipr
 *.iws
 
-# Jupyter
+# Jupyter notebooks checkpoints
 .ipynb_checkpoints/
 
-# Docker Compose override
+# Docker Compose overrides
 docker-compose.override.yml
 
-# Distribution / packaging
+# Distribution & build files
 build/
 dist/
 *.egg-info/
 
-# Kafka / ingestion data directories
+# Kafka / downloaded data directories
 data/fsd/
 
-# Generated dataset assets (we keep the empty folders via .gitkeep)
+# Dataset asset files (retain empty folder structure)
 data/assets/**
 !data/assets/.gitkeep
 
-# Stream seeds (keep folder skeleton via .gitkeep)
+# Stream ingestion folder (retain empty folder structure)
 data/stream/**
 !data/stream/.gitkeep
 
-# Generated embeddings (keep folder skeleton via .gitkeep)
+# Embeddings folder
 data/embeddings/
+
+# Faiss index files
+data/index.faiss
