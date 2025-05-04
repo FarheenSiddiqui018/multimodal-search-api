@@ -56,4 +56,5 @@ data/stream/**
 data/embeddings/
 
 # Faiss index files
-data/index.faiss
+data/faiss*
+

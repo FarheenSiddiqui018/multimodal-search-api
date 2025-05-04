@@ -11,3 +11,4 @@ python-dotenv
 
 # support libs
 requests             # for any HTTP downloads
+prometheus_client

@@ -1,129 +1,149 @@
+
 # Multimodal Search API
 
-An end-to-end cost-efficient, scalable multi-modal embedding & search system.  
+An end-to-end cost-efficient, scalable multi-modal embedding & search system.
+
+**Steps Completed**
 
 ---
 
-## Step 1: Dataset Ingestion
+## 1️⃣ Dataset Ingestion
 
-Builds a ~10 K-asset labeled corpus (text, image, audio, video) and loads it into Kafka.
+Build a medium-sized (~10K assets) labeled corpus and load it into Kafka via batch and streaming pipelines.
 
-### Prerequisites
+### 📦 Prerequisites
 
 - **Python 3.10+**  
-- **Homebrew** (for Docker Compose)  
-- **Docker Desktop** (or native Kafka via Homebrew)  
+- **Homebrew** (for Docker Compose & Kafka)  
+- **Docker Desktop**
 
-### Setup
+### 🔧 Setup
 
-1. **Clone & enter**  
-   ```bash
-   git clone https://github.com/FarheenSiddiqui018/multimodal-search-api.git
-   cd multimodal-search-api
-   ```
+#### Clone & enter
 
-2. **Environment variables**  
-   Create a `.env` in the project root:
-   ```dotenv
-   KAFKA_BOOTSTRAP=localhost:9092
-   KAFKA_TOPIC=assets
-   WATCH_DIR=./data/stream
-   ```
+```bash
+git clone https://github.com/FarheenSiddiqui018/multimodal-search-api.git
+cd multimodal-search-api
+```
 
-3. **Python virtualenv & deps**  
-   ```bash
-   python3.10 -m venv .venv
-   source .venv/bin/activate
+#### Environment Variables
 
-   # Root requirements
-   pip install --upgrade pip
-   pip install -r requirements.txt
+Create a `.env` in the project root with:
 
-   # Ingestion service requirements
-   cd services/ingestion
-   pip install -r requirements.txt
-   cd ../..
-   ```
+```dotenv
+KAFKA_BOOTSTRAP=localhost:9092
+KAFKA_TOPIC=assets
+WATCH_DIR=./data/stream
+EMB_BATCH_SIZE=32
+EMB_TOPIC=embeddings
+METRICS_PORT=8001
 
-### Running
+PG_HOST=localhost
+PG_PORT=5432
+PG_USER=yourusername
+PG_PASSWORD=yourpassword
+PG_DATABASE=multimodal
+```
 
-1. **Build the dataset**  
-   ```bash
-   source .venv/bin/activate
-   python scripts/build_dataset.py
-   ```
-   _Generates_:  
-   - ~2 500 IMDB text files  
-   - ~2 500 Imagenette images  
-   - ~2 500 synthetic audio clips  
-   - ~2 500 synthetic videos  
-   - `metadata.jsonl` & 400 stream seeds in `data/stream/`
+#### Python environment
 
-2. **Start Kafka & Zookeeper**  
-   ```bash
-   # Docker Compose (recommended)
-   docker compose -f infra/docker-compose.yml up -d
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
 
-   # or Homebrew
-   brew services start zookeeper kafka
-   ```
-   Ensure topic `assets` exists:
-   ```bash
-   kafka-topics --create --bootstrap-server localhost:9092 --topic assets
-   ```
-
-3. **Batch ingestion**  
-   ```bash
-   python services/ingestion/batch_ingest.py data/metadata.jsonl
-   ```
-
-4. **Streaming ingestion**  
-   ```bash
-   python services/ingestion/stream_ingest.py
-   ```
-   Then copy any file into `data/stream/` to “stream” it:
-   ```bash
-   cp data/assets/text/txt_00000.txt data/stream/
-   ```
+pip install --upgrade pip
+pip install -r requirements.txt
+```
 
 ---
 
-## Step 2: Embedding Generation
+### 🚀 Running Dataset Ingestion
 
-Generate multi-modal embeddings in both **batch** and **streaming** modes.  
-- **Images, Audio, Video** → ImageBind VISION (audio → mel-spectrogram, video → mid-frame)  
-- **Text** → TF-IDF (512-dim vectors)
-
-### Dependencies
+#### Build Dataset
 
 ```bash
-cd services/embedding
-pip install --upgrade pip
-pip install -r requirements.txt
-cd ../..
+python scripts/build_dataset.py
 ```
+
+#### Kafka & Zookeeper
+
+```bash
+docker compose -f infra/docker-compose.yml up -d
+```
+
+* Zookeeper: `2181`
+* Kafka: `9092`
+* PostgreSQL: `5432`
+
+---
+
+### 🔄 Ingestion
+
+#### Batch Ingestion
+
+```bash
+python services/ingestion/batch_ingest.py data/metadata.jsonl
+```
+
+#### Streaming Ingestion
+
+```bash
+python services/ingestion/stream_ingest.py
+```
+
+---
+
+## 2️⃣ Embedding Generation
+
+Generate embeddings for text, images, audio, and video using ImageBind and TF-IDF (for text).
 
 ### Batch Embedding
 
 ```bash
-# quick smoke test (only first 100)
-python services/embedding/batch_embed.py --limit 100
-
-# full run
 python services/embedding/batch_embed.py
 ```
 
-You’ll see:
-
-- **VISION** pass (images + audio + video)  
-- **TEXT** pass (TF-IDF on text)
-
-Generated `.npy` embeddings land under `data/embeddings/`.
+* Embeddings saved under `data/embeddings/`
 
 ### Streaming Embedding
 
+Ensure Kafka is running, then:
+
 ```bash
-# In one shell
-source .venv/bin/activate
 python services/embedding/stream_embed.py
 ```
+
+---
+
+## 3️⃣ Storage & Indexing
+
+- Embeddings stored using **Faiss** vector database for similarity search.
+- Metadata stored in **PostgreSQL**.
+
+### Running PostgreSQL and Faiss Indexing
+
+Ensure PostgreSQL credentials set in `.env`, then:
+
+```bash
+docker compose -f infra/docker-compose.yml up -d
+```
+
+**Database Schema (Postgres)**
+
+- `id`: UUID (Primary Key)
+- `modality`: text
+- `asset_path`: text
+- `meta`: JSONB
+
+### Indexing embeddings
+
+Embeddings are indexed using Faiss:
+
+- Faiss index stored in `data/`
+
+---
+
+## 📈 Monitoring & Logs
+
+- Logs: `logs/`
+- Embedding metrics available via Prometheus at port defined by `METRICS_PORT`.
